@@ -130,7 +130,7 @@ export async function identifyWaste(
   payload: IdentifyRequestPayload
 ): Promise<AIIdentificationResult> {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
-  const modelName = process.env.GEMINI_MODEL?.trim() || 'gemini-2.5-flash';
+  const modelName = process.env.GEMINI_MODEL?.trim() || 'gemini-3.8-flash';
 
   // 1. Transparent Fallback if no key is configured
   if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
@@ -178,13 +178,19 @@ Please respond strictly with a valid JSON object matching this schema:
       });
     }
 
-    const response = await ai.models.generateContent({
+    const apiCallPromise = ai.models.generateContent({
       model: modelName,
       contents: contentParts as any,
       config: {
         responseMimeType: 'application/json'
       }
     });
+
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Gemini API request timed out after 6 seconds')), 6000)
+    );
+
+    const response = await Promise.race([apiCallPromise, timeoutPromise]);
 
     const responseText = response.text?.trim() || '{}';
     let parsed: unknown;
