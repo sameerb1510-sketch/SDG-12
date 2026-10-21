@@ -1,10 +1,9 @@
 /**
  * Server-side Gemini AI Integration & Transparent Demo Fallback
- * Official Google Gen AI SDK integration with structured output validation.
+ * Official Google Gemini REST API integration with structured output validation.
  * Secrets remain strictly server-side.
  */
 
-import { GoogleGenAI, Type } from '@google/genai';
 import {
   ALL_WASTE_CATEGORIES,
   AIIdentificationResult,
@@ -63,7 +62,7 @@ export function generateDemoFallbackResponse(
     itemName = 'Personal Computer / Laptop';
     category = WasteCategory.COMPUTERS_LAPTOPS;
     explanation = 'Identified computing hardware based on keywords.';
-  } else if (/battery|power bank|cell|lithium|li-ion|aaa|aa\b/i.test(text)) {
+  } else if (/battery|power\s*bank|cell|pack|lithium|li-ion|aaa|aa\b/i.test(text)) {
     itemName = 'Battery Unit / Power Cell';
     category = WasteCategory.BATTERIES;
     explanation = 'Identified standalone or auxiliary battery unit.';
@@ -124,13 +123,15 @@ export function generateDemoFallbackResponse(
 }
 
 /**
- * Main identification coordinator. Calls Gemini if configured, otherwise falls back smoothly.
+ * Main identification coordinator.
+ * Calls Google Gemini REST generateContent API with full image/text multimodal support,
+ * and falls back safely if unavailable.
  */
 export async function identifyWaste(
   payload: IdentifyRequestPayload
 ): Promise<AIIdentificationResult> {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
-  const modelName = process.env.GEMINI_MODEL?.trim() || 'gemini-3.8-flash';
+  const configuredModel = process.env.GEMINI_MODEL?.trim() || 'gemini-3.8-flash';
 
   // 1. Transparent Fallback if no key is configured
   if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
@@ -138,12 +139,7 @@ export async function identifyWaste(
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
-
-    // Prepare contents
-    const contentParts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = [];
-
-    // System and user instructions
+    // Build prompt instructions
     let promptText = SYSTEM_INSTRUCTION;
     promptText += '\nAnalyze this electronic waste item:\n';
 
@@ -167,10 +163,12 @@ Please respond strictly with a valid JSON object matching this schema:
 }
 `;
 
-    contentParts.push({ text: promptText });
+    const parts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = [
+      { text: promptText }
+    ];
 
     if (payload.imageBase64 && payload.imageMimeType) {
-      contentParts.push({
+      parts.push({
         inlineData: {
           mimeType: payload.imageMimeType,
           data: payload.imageBase64
@@ -178,33 +176,83 @@ Please respond strictly with a valid JSON object matching this schema:
       });
     }
 
-    const apiCallPromise = ai.models.generateContent({
-      model: modelName,
-      contents: contentParts as any,
-      config: {
+    const requestBody = {
+      contents: [{ parts }],
+      generationConfig: {
         responseMimeType: 'application/json'
       }
-    });
+    };
 
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('Gemini API request timed out after 6 seconds')), 6000)
-    );
+    // Candidate models to try in sequence if one experiences demand spikes
+    const candidateModels = [
+      configuredModel,
+      'gemini-3.8-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-flash-latest'
+    ];
+    const uniqueModels = Array.from(new Set(candidateModels));
 
-    const response = await Promise.race([apiCallPromise, timeoutPromise]);
+    let responseData: any = null;
+    let lastError: string | null = null;
 
-    const responseText = response.text?.trim() || '{}';
+    for (const model of uniqueModels) {
+      const cleanModelName = model.replace(/^models\//, '');
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModelName}:generateContent?key=${apiKey}`;
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        const data = await response.json();
+
+        if (data.error) {
+          lastError = data.error.message || `API error code ${data.error.code}`;
+          continue;
+        }
+
+        if (data.candidates && data.candidates[0]?.content?.parts) {
+          responseData = data;
+          break; // Succeeded!
+        }
+      } catch (err: unknown) {
+        lastError = err instanceof Error ? err.message : String(err);
+      }
+    }
+
+    if (!responseData) {
+      throw new Error(lastError || 'No response candidates returned from Gemini API.');
+    }
+
+    // Extract text from parts (filtering out any non-text parts)
+    const contentParts = responseData.candidates[0]?.content?.parts || [];
+    let responseText = '';
+    for (const part of contentParts) {
+      if (typeof part.text === 'string' && part.text.trim()) {
+        responseText = part.text.trim();
+        break;
+      }
+    }
+
     let parsed: unknown;
     try {
       parsed = JSON.parse(responseText);
     } catch {
-      // Strip markdown code fences if model enclosed in ```json ... ```
+      // Clean markdown fences if present
       const cleaned = responseText.replace(/^```json\s*/, '').replace(/\s*```$/, '').trim();
       parsed = JSON.parse(cleaned);
     }
 
     const normalized = validateAndNormalizeAIResult(parsed, payload.userCategoryHint);
 
-    // Apply safety rule overlay: If user description has severe hazards, guarantee hazard flags
+    // Apply safety rule overlay: If user description contains severe hazards, guarantee hazard flags
     const localSafety = evaluateSafetyRules(payload.description || '');
     if (localSafety.isHazardous) {
       normalized.isHazardous = true;
@@ -222,7 +270,7 @@ Please respond strictly with a valid JSON object matching this schema:
     let reason: 'quota_exceeded' | 'network_error' | 'api_error' = 'api_error';
     if (errorMsg.includes('429') || /quota|resource_exhausted/i.test(errorMsg)) {
       reason = 'quota_exceeded';
-    } else if (/econnrefused|enotfound|fetch failed|timeout/i.test(errorMsg)) {
+    } else if (/econnrefused|enotfound|fetch failed|timeout|abort/i.test(errorMsg)) {
       reason = 'network_error';
     }
 
