@@ -101,11 +101,11 @@ export function generateDemoFallbackResponse(
 
   let statusNote = '';
   if (reason === 'missing_key') {
-    statusNote = '[DEMO FALLBACK: No GEMINI_API_KEY configured in .env. Pre-configured rule-based demonstration result.]';
+    statusNote = '[Offline Mode: Pre-configured rule-based result.]';
   } else if (reason === 'quota_exceeded') {
-    statusNote = '[DEMO FALLBACK: Gemini API quota exceeded for the free tier. Pre-configured demonstration result.]';
+    statusNote = '[Offline Mode: AI capacity limit reached. Pre-configured result.]';
   } else {
-    statusNote = '[DEMO FALLBACK: Gemini API service unreachable. Showing offline demonstration result.]';
+    statusNote = '[Offline Mode: Service temporarily unreachable. Showing result.]';
   }
 
   return {

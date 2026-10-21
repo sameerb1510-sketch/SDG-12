@@ -53,7 +53,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
     version: '1.0.0',
     mode: isLanMode ? 'LAN_DEMO' : 'LOCAL_DEV',
     aiConfigured: hasGeminiKey,
-    modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+    modelName: process.env.GEMINI_MODEL || 'gemini-flash-latest',
     facilityCount: fictionalFacilities.length,
     timestamp: new Date().toISOString()
   });

@@ -88,7 +88,7 @@ export const LocationControls: React.FC<LocationControlsProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <MapPin size={18} className="text-emerald-600" />
-          <strong style={{ fontSize: '0.95rem' }}>Your Demonstration Location:</strong>
+          <strong style={{ fontSize: '0.95rem' }}>Your Location:</strong>
           {isAtDefault && (
             <span className="badge-pill" style={{ backgroundColor: '#e2e8f0', color: '#475569' }}>
               Default Mumbai Center
@@ -115,10 +115,10 @@ export const LocationControls: React.FC<LocationControlsProps> = ({
             style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
             onClick={onResetToDefault}
             disabled={isAtDefault}
-            title="Reset coordinates back to Mumbai demo center"
+            title="Reset coordinates back to Mumbai center"
           >
             <RotateCcw size={13} />
-            <span>Reset to Demo Location</span>
+            <span>Reset to Default Location</span>
           </button>
         </div>
       </div>

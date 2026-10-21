@@ -136,7 +136,7 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
               Click or drag & drop a photo of your electronic item
             </p>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-subtle)' }}>
-              Supports JPG, PNG, WebP up to 5 MB. In-memory processing; photos are never stored.
+              Supports JPG, PNG, WebP up to 5 MB. In-memory processing.
             </p>
           </div>
         </div>
@@ -203,7 +203,7 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
           disabled={isLoading || !base64Data}
         >
           <Sparkles size={16} />
-          <span>{isLoading ? 'Analyzing Photo with Gemini...' : 'Analyze Photo with AI'}</span>
+          <span>{isLoading ? 'Analyzing Photo with AI...' : 'Analyze Photo with AI'}</span>
         </button>
       )}
     </form>

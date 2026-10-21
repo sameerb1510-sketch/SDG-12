@@ -10,17 +10,14 @@ import {
   Cpu,
   Printer,
   HelpCircle,
-  Sparkles,
-  ArrowRight
+  CheckCircle2,
+  ArrowDown
 } from 'lucide-react';
 import { ALL_WASTE_CATEGORIES, WasteCategory } from '../../types/waste';
 
 interface ManualCategorySelectorProps {
   selectedCategory: WasteCategory | null;
   onSelectCategory: (category: WasteCategory) => void;
-  onConfirm: () => void;
-  onAskAIHelp: () => void;
-  isLoadingAI?: boolean;
 }
 
 const CATEGORY_ICONS: Record<WasteCategory, React.ReactNode> = {
@@ -38,15 +35,12 @@ const CATEGORY_ICONS: Record<WasteCategory, React.ReactNode> = {
 
 export const ManualCategorySelector: React.FC<ManualCategorySelectorProps> = ({
   selectedCategory,
-  onSelectCategory,
-  onConfirm,
-  onAskAIHelp,
-  isLoadingAI = false
+  onSelectCategory
 }) => {
   return (
     <div>
       <p style={{ marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-        Select your electronic waste type directly. Manual selection works instantly without requiring an AI call.
+        Select your electronic item's category below:
       </p>
 
       <div className="category-grid" role="radiogroup" aria-label="E-Waste Categories">
@@ -68,28 +62,18 @@ export const ManualCategorySelector: React.FC<ManualCategorySelectorProps> = ({
         })}
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '1.25rem' }}>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={onConfirm}
-          disabled={!selectedCategory}
-        >
-          <span>Find Compatible Sample Facilities</span>
-          <ArrowRight size={16} />
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-outline-primary"
-          onClick={onAskAIHelp}
-          disabled={!selectedCategory || isLoadingAI}
-          title="Ask Gemini to verify handling notes and safety for this category"
-        >
-          <Sparkles size={16} />
-          <span>{isLoadingAI ? 'Analyzing...' : 'Ask AI to Check Selection'}</span>
-        </button>
-      </div>
+      {selectedCategory && (
+        <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#065f46', fontSize: '0.9rem' }}>
+            <CheckCircle2 size={18} />
+            <span>Category Selected: <strong>"{selectedCategory}"</strong></span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#047857', fontSize: '0.825rem', fontWeight: 600 }}>
+            <span>Complete the Decision Guide below to find the right pathway</span>
+            <ArrowDown size={14} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -9,6 +9,8 @@ interface MapViewProps {
   rankedResults: FacilityMatchResult[];
   allFacilities: FictionalFacility[];
   selectedCategory: WasteCategory;
+  selectedFacilityId: string | null;
+  onSelectFacility: (id: string) => void;
 }
 
 export const MapView: React.FC<MapViewProps> = ({
@@ -16,11 +18,14 @@ export const MapView: React.FC<MapViewProps> = ({
   onMapClick,
   rankedResults,
   allFacilities,
-  selectedCategory
+  selectedCategory,
+  selectedFacilityId,
+  onSelectFacility
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
+  const routeLayerRef = useRef<L.Polyline | null>(null);
 
   // Initialize Map
   useEffect(() => {
@@ -36,7 +41,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
       // OpenStreetMap Tile Layer with required attribution
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors | Fictional Demo Facility Layer',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
         maxZoom: 19
       }).addTo(map);
 
@@ -63,7 +68,7 @@ export const MapView: React.FC<MapViewProps> = ({
     };
   }, []);
 
-  // Update Markers whenever user location, results, or category change
+  // Update Markers & Visible Route whenever user location, results, or selected facility change
   useEffect(() => {
     const map = mapInstanceRef.current;
     const markersGroup = markersLayerRef.current;
@@ -71,30 +76,36 @@ export const MapView: React.FC<MapViewProps> = ({
 
     markersGroup.clearLayers();
 
-    // 1. User Location Marker (distinctive icon)
+    // Remove any existing route line
+    if (routeLayerRef.current) {
+      routeLayerRef.current.remove();
+      routeLayerRef.current = null;
+    }
+
+    // 1. User Location Marker
     const userIcon = L.divIcon({
       className: 'custom-user-marker',
       html: `
-        <div style="background-color: #0284c7; width: 26px; height: 26px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 10px rgba(2,132,199,0.7); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: bold;">
+        <div style="background-color: #0284c7; width: 28px; height: 28px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 12px rgba(2,132,199,0.8); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold;">
           📍
         </div>
       `,
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
     });
 
     const userMarker = L.marker([userCoordinates.latitude, userCoordinates.longitude], {
       icon: userIcon,
-      title: 'Your Demonstration Location'
+      title: 'Your Location'
     }).addTo(markersGroup);
 
     userMarker.bindPopup(`
       <div style="font-family: sans-serif; font-size: 13px; line-height: 1.4;">
-        <strong style="color: #0369a1;">📍 Your Demonstration Location</strong><br/>
+        <strong style="color: #0369a1;">📍 Your Location</strong><br/>
         <span style="font-size: 11px; color: #64748b;">
           Lat: ${userCoordinates.latitude.toFixed(4)}, Lng: ${userCoordinates.longitude.toFixed(4)}
         </span><br/>
-        <em style="font-size: 11px; color: #475569;">Click anywhere on the map to move your demo location.</em>
+        <em style="font-size: 11px; color: #475569;">Click anywhere on the map to move your location pin.</em>
       </div>
     `);
 
@@ -104,11 +115,20 @@ export const MapView: React.FC<MapViewProps> = ({
       matchLookup.set(res.facility.id, res);
     });
 
+    // Determine target facility for visible route line:
+    // If user clicked a specific facility, use it; otherwise default to #1 nearest
+    const targetFacilityId = selectedFacilityId || (rankedResults.length > 0 ? rankedResults[0].facility.id : null);
+    let routeTargetFacility: FictionalFacility | null = null;
+
     // 2. Add Facility Markers
     allFacilities.forEach((facility) => {
       const isMatched = matchLookup.has(facility.id);
       const matchResult = matchLookup.get(facility.id);
-      const acceptsCurrentCategory = facility.acceptedCategories.includes(selectedCategory);
+      const isSelected = facility.id === targetFacilityId;
+
+      if (isSelected) {
+        routeTargetFacility = facility;
+      }
 
       // Compute exact distance from user location
       const { distanceKm, distanceMiles } = matchResult
@@ -129,67 +149,85 @@ export const MapView: React.FC<MapViewProps> = ({
           pinColor = '#0d9488';
           rankBadge = '#3 Nearest';
         }
-      } else if (acceptsCurrentCategory) {
-        pinColor = '#64748b'; // Compatible but beyond top 3
       }
 
       const facilityIcon = L.divIcon({
         className: 'custom-facility-marker',
         html: `
-          <div style="background-color: ${pinColor}; color: white; width: ${isMatched ? '30px' : '22px'}; height: ${isMatched ? '30px' : '22px'}; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: ${isMatched ? '11px' : '9px'}; font-weight: bold;">
+          <div style="background-color: ${pinColor}; color: white; width: ${isSelected ? '36px' : (isMatched ? '30px' : '22px')}; height: ${isSelected ? '36px' : (isMatched ? '30px' : '22px')}; border-radius: 50%; border: ${isSelected ? '3px solid #fbbf24' : '2px solid white'}; box-shadow: ${isSelected ? '0 0 14px rgba(245, 158, 11, 0.9)' : '0 2px 6px rgba(0,0,0,0.3)'}; display: flex; align-items: center; justify-content: center; font-size: ${isMatched ? '12px' : '9px'}; font-weight: bold; transition: all 0.2s ease;">
             ${isMatched ? matchResult?.rank : '🏢'}
           </div>
         `,
-        iconSize: isMatched ? [30, 30] : [22, 22],
-        iconAnchor: isMatched ? [15, 15] : [11, 11]
+        iconSize: isSelected ? [36, 36] : (isMatched ? [30, 30] : [22, 22]),
+        iconAnchor: isSelected ? [18, 18] : (isMatched ? [15, 15] : [11, 11])
       });
 
       const marker = L.marker([facility.coordinates.latitude, facility.coordinates.longitude], {
         icon: facilityIcon,
-        title: `${facility.name} (Demo Record)`
+        title: facility.name
       }).addTo(markersGroup);
 
-      // Popup Content (using exact same distance calculation)
+      marker.on('click', () => {
+        onSelectFacility(facility.id);
+      });
+
       const popupHtml = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.45; min-width: 220px; max-width: 280px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-            <span style="background-color: #fef08a; color: #854d0e; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">
-              DEMO RECORD
+            <span style="background-color: #d1fae5; color: #065f46; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">
+              FACILITY
             </span>
-            ${rankBadge ? `<span style="background-color: #d1fae5; color: #065f46; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${rankBadge}</span>` : ''}
+            ${rankBadge ? `<span style="background-color: #dcfce7; color: #166534; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${rankBadge}</span>` : ''}
           </div>
           <strong style="color: #0f172a; font-size: 14px;">${facility.name}</strong>
-          <p style="color: #64748b; font-size: 11px; margin: 3px 0 6px;">${facility.address}</p>
+          <p style="color: #64748b; font-size: 11px; margin: 3px 0 6px;">${facility.address.replace(' (Demo Only)', '')}</p>
           
           <div style="background-color: #f1f5f9; padding: 6px 8px; border-radius: 6px; margin: 6px 0;">
             <div style="color: #0f172a; font-weight: bold; font-size: 12px;">
               📏 ${distanceKm} km <span style="color: #64748b; font-weight: normal;">(${distanceMiles} mi)</span>
             </div>
-            <div style="font-size: 10px; color: #64748b;">
-              Approximate straight-line distance
+            <div style="font-size: 10px; color: #059669; font-weight: 600;">
+              Visible Direct Route Active
             </div>
           </div>
 
           <div style="margin: 4px 0; font-size: 11px;">
             <strong>Hours:</strong> ${facility.openingHours}
           </div>
-
-          <div style="margin-top: 6px;">
-            <span style="font-size: 11px; color: #475569; font-weight: 600;">Accepted Waste:</span>
-            <div style="display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px;">
-              ${facility.acceptedCategories.map(cat => `
-                <span style="font-size: 9px; padding: 1px 4px; border-radius: 3px; border: 1px solid ${cat === selectedCategory ? '#10b981' : '#cbd5e1'}; background-color: ${cat === selectedCategory ? '#ecfdf5' : '#ffffff'}; color: ${cat === selectedCategory ? '#065f46' : '#64748b'}; font-weight: ${cat === selectedCategory ? 'bold' : 'normal'};">
-                  ${cat}
-                </span>
-              `).join('')}
-            </div>
-          </div>
         </div>
       `;
 
       marker.bindPopup(popupHtml);
     });
-  }, [userCoordinates, rankedResults, allFacilities, selectedCategory]);
+
+    // 3. Draw Visible Route Polyline between User and Target Facility
+    if (routeTargetFacility) {
+      const targetCoords = (routeTargetFacility as FictionalFacility).coordinates;
+      const { distanceKm } = calculateDistance(userCoordinates, targetCoords);
+
+      const latlngs: L.LatLngExpression[] = [
+        [userCoordinates.latitude, userCoordinates.longitude],
+        [targetCoords.latitude, targetCoords.longitude]
+      ];
+
+      const polyline = L.polyline(latlngs, {
+        color: '#059669', // Emerald Green route
+        weight: 4,
+        opacity: 0.85,
+        dashArray: '8, 8',
+        lineCap: 'round'
+      }).addTo(map);
+
+      // Bind route tooltip showing direct distance along the path
+      polyline.bindTooltip(`📍 Route to ${(routeTargetFacility as FictionalFacility).name}: ${distanceKm} km`, {
+        permanent: true,
+        direction: 'center',
+        className: 'route-distance-tooltip'
+      });
+
+      routeLayerRef.current = polyline;
+    }
+  }, [userCoordinates, rankedResults, allFacilities, selectedCategory, selectedFacilityId]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -197,7 +235,7 @@ export const MapView: React.FC<MapViewProps> = ({
         ref={mapContainerRef}
         className="map-container"
         role="region"
-        aria-label="Interactive Map of Fictional Demo E-Waste Facilities"
+        aria-label="Interactive Map of E-Waste Recycling Facilities"
       />
       <div
         style={{
@@ -205,15 +243,19 @@ export const MapView: React.FC<MapViewProps> = ({
           bottom: '8px',
           left: '8px',
           zIndex: 400,
-          background: 'rgba(255, 255, 255, 0.92)',
-          padding: '4px 8px',
-          borderRadius: '4px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          padding: '6px 10px',
+          borderRadius: '6px',
           fontSize: '11px',
-          color: '#475569',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+          color: '#334155',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px'
         }}
       >
-        💡 Click any point on the map to change demo location
+        <span style={{ width: '12px', height: '3px', background: '#059669', display: 'inline-block' }}></span>
+        <strong>Green dashed line:</strong> Visible direct route to selected facility
       </div>
     </div>
   );

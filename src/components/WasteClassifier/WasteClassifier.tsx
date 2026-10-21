@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   ListFilter,
-  FileText,
   Camera,
   RotateCcw,
   Sparkles,
@@ -13,11 +12,10 @@ import {
 } from '../../types/waste';
 import { identifyWasteItem } from '../../services/api';
 import { ManualCategorySelector } from './ManualCategorySelector';
-import { TextDescriptionInput } from './TextDescriptionInput';
 import { PhotoUploader } from './PhotoUploader';
 import { ClassificationResult } from './ClassificationResult';
 
-type TabType = 'manual' | 'text' | 'photo';
+type TabType = 'manual' | 'photo';
 
 interface WasteClassifierProps {
   onCategoryConfirmed: (category: WasteCategory) => void;
@@ -36,46 +34,13 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
   const [apiResult, setApiResult] = useState<AIIdentificationResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 1. Manual Category Selection: Proceed directly without AI
-  const handleManualConfirm = () => {
-    if (manualSelection) {
-      onCategoryConfirmed(manualSelection);
-    }
+  // 1. Manual Category Selection: updates active category
+  const handleSelectCategory = (cat: WasteCategory) => {
+    setManualSelection(cat);
+    onCategoryConfirmed(cat);
   };
 
-  // 1b. Ask AI to review manual category selection
-  const handleAskAIHelp = async () => {
-    if (!manualSelection) return;
-    setIsLoading(true);
-    setErrorMessage(null);
-    try {
-      const result = await identifyWasteItem({
-        description: `Please verify handling advice, battery or electronic safety protocols for category: ${manualSelection}.`,
-        userCategoryHint: manualSelection
-      });
-      setApiResult(result);
-    } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to consult AI.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 2. Text Description submission
-  const handleTextAnalyze = async (text: string) => {
-    setIsLoading(true);
-    setErrorMessage(null);
-    try {
-      const result = await identifyWasteItem({ description: text });
-      setApiResult(result);
-    } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to identify item.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 3. Photo Upload submission
+  // 2. Photo Upload submission
   const handlePhotoAnalyze = async (base64: string, mimeType: string, optionalNote?: string) => {
     setIsLoading(true);
     setErrorMessage(null);
@@ -107,7 +72,7 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
             <span>Step 1: Identify Your Electronic Waste</span>
           </h2>
           <p className="card-subtitle">
-            Choose any of the three methods below. Manual selection works instantly without AI; text and photos feature optional Gemini AI assistance.
+            Choose an identification method below. Select a category manually or upload a photo for automated classification.
           </p>
         </div>
 
@@ -124,7 +89,7 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
         )}
       </div>
 
-      {/* Tabs */}
+      {/* Two Tabs: Manual Selection and Photo Upload */}
       <div className="method-tabs" role="tablist" aria-label="E-Waste Identification Methods">
         <button
           type="button"
@@ -137,21 +102,7 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
           }}
         >
           <ListFilter size={18} />
-          <span>1. Manual Category</span>
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'text'}
-          className={`method-tab-btn ${activeTab === 'text' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveTab('text');
-            handleReset();
-          }}
-        >
-          <FileText size={18} />
-          <span>2. Text Description</span>
+          <span>1. Manual Selection</span>
         </button>
 
         <button
@@ -165,7 +116,7 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
           }}
         >
           <Camera size={18} />
-          <span>3. Photo Upload</span>
+          <span>2. Photo Upload</span>
         </button>
       </div>
 
@@ -176,7 +127,7 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
         </div>
       )}
 
-      {/* If AI has returned a result, display it */}
+      {/* If photo analysis has returned a result, display it */}
       {apiResult ? (
         <ClassificationResult
           result={apiResult}
@@ -190,17 +141,7 @@ export const WasteClassifier: React.FC<WasteClassifierProps> = ({
           {activeTab === 'manual' && (
             <ManualCategorySelector
               selectedCategory={manualSelection}
-              onSelectCategory={(cat) => setManualSelection(cat)}
-              onConfirm={handleManualConfirm}
-              onAskAIHelp={handleAskAIHelp}
-              isLoadingAI={isLoading}
-            />
-          )}
-
-          {activeTab === 'text' && (
-            <TextDescriptionInput
-              onAnalyze={handleTextAnalyze}
-              isLoading={isLoading}
+              onSelectCategory={handleSelectCategory}
             />
           )}
 

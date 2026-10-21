@@ -63,9 +63,9 @@ export const ClassificationResult: React.FC<ClassificationResultProps> = ({
             <span
               className="badge-pill"
               style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}
-              title="Predetermined offline sample result because no GEMINI_API_KEY was provided"
+              title="Offline recognition result"
             >
-              Demo Fallback
+              Offline Mode
             </span>
           )}
         </div>
@@ -120,6 +120,29 @@ export const ClassificationResult: React.FC<ClassificationResultProps> = ({
       <p style={{ fontSize: '0.925rem', color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: 1.6 }}>
         <strong>Rationale:</strong> {result.explanation}
       </p>
+
+      {/* Decision Pathway: Repair vs Reuse vs Recycle */}
+      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-md)', padding: '1rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <strong style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
+            Sustainable Decision Pathway Recommendation:
+          </strong>
+          <span
+            className="badge-pill"
+            style={{
+              backgroundColor: result.isHazardous ? '#fee2e2' : '#ecfdf5',
+              color: result.isHazardous ? '#991b1b' : '#065f46'
+            }}
+          >
+            {result.isHazardous ? '♻️ Recycle at Authorized Point' : '🛠️ Repair or 🎁 Donate / Reuse'}
+          </span>
+        </div>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>
+          {result.isHazardous
+            ? 'Due to detected hazards or swelling, this item should be recycled at an authorized collection center rather than repaired.'
+            : 'If functional or fixable, consider repairing or donating to schools or charities before sending for e-waste recycling.'}
+        </p>
+      </div>
 
       {/* Follow-up question if uncertain */}
       {result.followUpQuestion && (

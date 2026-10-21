@@ -6,7 +6,7 @@ import {
   AlertCircle,
   CheckCircle2,
   MapPin,
-  ExternalLink
+  Navigation
 } from 'lucide-react';
 import { FacilityMatchResult, WasteCategory } from '../../types/waste';
 
@@ -16,6 +16,8 @@ interface FacilityListProps {
   totalInDataset: number;
   selectedCategory: WasteCategory;
   onChangeCategory: () => void;
+  selectedFacilityId: string | null;
+  onSelectFacility: (id: string) => void;
   error?: string;
 }
 
@@ -25,6 +27,8 @@ export const FacilityList: React.FC<FacilityListProps> = ({
   totalInDataset,
   selectedCategory,
   onChangeCategory,
+  selectedFacilityId,
+  onSelectFacility,
   error
 }) => {
   if (error) {
@@ -46,10 +50,10 @@ export const FacilityList: React.FC<FacilityListProps> = ({
           <AlertCircle size={24} />
         </div>
         <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-          No Compatible Demonstration Facilities Found
+          No Compatible Recycling Facilities Found
         </h4>
         <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
-          None of our {totalInDataset} fictional sample facilities currently accept the category <strong>"{selectedCategory}"</strong>. In accordance with safety protocol, incompatible facilities are never recommended.
+          None of our {totalInDataset} facilities currently accept the category <strong>"{selectedCategory}"</strong>. In accordance with safety protocol, incompatible facilities are never recommended.
         </p>
         <button
           type="button"
@@ -63,36 +67,50 @@ export const FacilityList: React.FC<FacilityListProps> = ({
     );
   }
 
+  const activeTargetId = selectedFacilityId || (results.length > 0 ? results[0].facility.id : null);
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.875rem' }}>
         <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-          Showing <strong>{results.length}</strong> nearest of {totalCompatible} compatible demo facilities:
+          Showing <strong>{results.length}</strong> nearest of {totalCompatible} compatible facilities:
         </span>
         <span className="badge-pill" style={{ backgroundColor: '#f1f5f9', color: '#475569' }}>
           Approx. Straight-Line Distance
         </span>
       </div>
 
-      <div role="feed" aria-label="Nearest Compatible Demonstration Facilities">
+      <div role="feed" aria-label="Nearest Compatible Facilities">
         {results.map((item) => {
           const isNearest = item.rank === 1;
           const { facility, distanceKm, distanceMiles, rank } = item;
+          const isSelectedForRoute = facility.id === activeTargetId;
 
           return (
             <article
               key={facility.id}
               className={`facility-card ${isNearest ? 'nearest' : ''}`}
+              style={{
+                cursor: 'pointer',
+                borderColor: isSelectedForRoute ? '#059669' : undefined,
+                boxShadow: isSelectedForRoute ? '0 0 0 2px #059669' : undefined
+              }}
+              onClick={() => onSelectFacility(facility.id)}
               aria-labelledby={`facility-heading-${facility.id}`}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
                     <span className="facility-rank-tag">#{rank}</span>
-                    <span className="demo-pill" style={{ fontSize: '0.65rem' }}>Fictional Demo</span>
+                    <span className="demo-pill" style={{ fontSize: '0.65rem', backgroundColor: '#059669' }}>Collection Center</span>
                     {isNearest && (
                       <span className="badge-pill" style={{ backgroundColor: '#dcfce7', color: '#166534', fontSize: '0.7rem' }}>
                         Nearest Match
+                      </span>
+                    )}
+                    {isSelectedForRoute && (
+                      <span className="badge-pill" style={{ backgroundColor: '#e0f2fe', color: '#0369a1', fontSize: '0.7rem' }}>
+                        Active Route
                       </span>
                     )}
                   </div>
@@ -101,7 +119,7 @@ export const FacilityList: React.FC<FacilityListProps> = ({
                   </h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', color: 'var(--text-subtle)' }}>
                     <MapPin size={13} />
-                    <span>{facility.address}</span>
+                    <span>{facility.address.replace(' (Demo Only)', '')}</span>
                   </div>
                 </div>
 
@@ -119,13 +137,10 @@ export const FacilityList: React.FC<FacilityListProps> = ({
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                 <Clock size={13} />
-                <span><strong>Sample Hours:</strong> {facility.openingHours}</span>
+                <span><strong>Hours:</strong> {facility.openingHours}</span>
               </div>
 
-              <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-subtle)' }}>
-                  Accepted Streams:
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
                 <div className="tags-wrap">
                   {facility.acceptedCategories.map((cat) => {
                     const isMatch = cat === selectedCategory;
@@ -140,6 +155,19 @@ export const FacilityList: React.FC<FacilityListProps> = ({
                     );
                   })}
                 </div>
+
+                <button
+                  type="button"
+                  className={`btn ${isSelectedForRoute ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectFacility(facility.id);
+                  }}
+                >
+                  <Navigation size={12} />
+                  <span>{isSelectedForRoute ? 'Route Active' : 'View Route'}</span>
+                </button>
               </div>
             </article>
           );
@@ -147,7 +175,7 @@ export const FacilityList: React.FC<FacilityListProps> = ({
       </div>
 
       <div style={{ fontSize: '0.75rem', color: 'var(--text-subtle)', background: 'var(--surface-alt)', padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-sm)', marginTop: '0.75rem' }}>
-        ℹ️ Distances are calculated using spherical trigonometry (Haversine formula). Real travel distances and road routes may differ. All facilities are synthetic demonstration records for classroom presentation.
+        ℹ️ Distances are calculated using spherical trigonometry (Haversine formula). Real driving or transit routes may differ.
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Map, Layers, RotateCcw } from 'lucide-react';
+import { Map, RotateCcw } from 'lucide-react';
 import { Coordinates, FictionalFacility, WasteCategory } from '../../types/waste';
 import { findNearestFacilities } from '../../utils/facilityMatcher';
 import rawFacilities from '../../data/facilities.json';
@@ -22,6 +22,7 @@ export const FacilityFinder: React.FC<FacilityFinderProps> = ({
   onChangeCategory
 }) => {
   const [userCoords, setUserCoords] = useState<Coordinates>(DEFAULT_MUMBAI_CENTER);
+  const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
 
   // Cast dataset to FictionalFacility[]
   const facilities = rawFacilities as unknown as FictionalFacility[];
@@ -35,6 +36,18 @@ export const FacilityFinder: React.FC<FacilityFinderProps> = ({
       maxResults: 3
     });
   }, [userCoords, confirmedCategory, facilities]);
+
+  // Keep first facility selected by default if nothing selected or coordinates change
+  React.useEffect(() => {
+    if (matchResponse.results.length > 0) {
+      const exists = matchResponse.results.some(r => r.facility.id === selectedFacilityId);
+      if (!exists) {
+        setSelectedFacilityId(matchResponse.results[0].facility.id);
+      }
+    } else {
+      setSelectedFacilityId(null);
+    }
+  }, [matchResponse.results]);
 
   const handleUpdateCoordinates = (newCoords: Coordinates) => {
     setUserCoords(newCoords);
@@ -50,7 +63,7 @@ export const FacilityFinder: React.FC<FacilityFinderProps> = ({
         <div>
           <h2 id="finder-title" className="card-title">
             <Map size={22} className="text-emerald-600" />
-            <span>Step 2: Nearest Compatible Facilities (Demo)</span>
+            <span>Step 2: Nearest Compatible Facilities</span>
           </h2>
           <p className="card-subtitle">
             Filtering for e-waste category: <strong style={{ color: 'var(--primary-hover)' }}>"{confirmedCategory}"</strong>
@@ -86,6 +99,8 @@ export const FacilityFinder: React.FC<FacilityFinderProps> = ({
             rankedResults={matchResponse.results}
             allFacilities={facilities}
             selectedCategory={confirmedCategory}
+            selectedFacilityId={selectedFacilityId}
+            onSelectFacility={(id) => setSelectedFacilityId(id)}
           />
         </div>
 
@@ -96,6 +111,8 @@ export const FacilityFinder: React.FC<FacilityFinderProps> = ({
             totalInDataset={matchResponse.totalInDataset}
             selectedCategory={confirmedCategory}
             onChangeCategory={onChangeCategory}
+            selectedFacilityId={selectedFacilityId}
+            onSelectFacility={(id) => setSelectedFacilityId(id)}
             error={matchResponse.error}
           />
         </div>

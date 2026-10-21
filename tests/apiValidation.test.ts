@@ -106,7 +106,7 @@ describe('Backend API Validation, Demo Fallback & Security Audit', () => {
 
       expect(result.isFallbackDemo).toBe(true);
       expect(result.category).toBe(WasteCategory.PHONES_TABLETS);
-      expect(result.explanation).toMatch(/DEMO FALLBACK/i);
+      expect(result.explanation).toMatch(/Offline Mode/i);
     });
 
     it('identifies batteries and triggers hazard rules in fallback mode', () => {

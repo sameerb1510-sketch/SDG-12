@@ -29,6 +29,16 @@ export const ALL_WASTE_CATEGORIES: WasteCategory[] = [
   WasteCategory.OTHER_UNCERTAIN
 ];
 
+export type DisposalPathway = 'REPAIR' | 'REUSE_DONATE' | 'RECYCLE';
+
+export interface DecisionPathwayDetails {
+  pathway: DisposalPathway;
+  title: string;
+  badgeLabel: string;
+  rationale: string;
+  actionSteps: string[];
+}
+
 export interface Coordinates {
   latitude: number;
   longitude: number;
@@ -42,13 +52,13 @@ export interface FictionalFacility {
   openingHours: string;
   description: string;
   address: string;
-  isDemo: true; // Explicitly marked as demo/fictional
+  isDemo: true;
   contactNote: string;
 }
 
 export interface FacilityMatchResult {
   facility: FictionalFacility;
-  distanceKm: number; // Straight-line distance in kilometers
+  distanceKm: number;
   distanceMiles: number;
   rank: number;
 }
@@ -64,6 +74,7 @@ export interface AIIdentificationResult {
   followUpQuestion?: string;
   isHazardous: boolean;
   isFallbackDemo?: boolean;
+  decisionPathway?: DecisionPathwayDetails;
 }
 
 export interface IdentifyRequestPayload {
@@ -71,6 +82,7 @@ export interface IdentifyRequestPayload {
   imageBase64?: string;
   imageMimeType?: string;
   userCategoryHint?: WasteCategory;
+  deviceCondition?: 'working' | 'minor_issue' | 'dead_broken' | 'hazardous';
 }
 
 export interface IdentifyResponsePayload {

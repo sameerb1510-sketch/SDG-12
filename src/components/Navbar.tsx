@@ -1,18 +1,22 @@
 import React from 'react';
-import { Recycle, HelpCircle, BookOpen, Laptop, Sparkles } from 'lucide-react';
+import { Recycle, Laptop, LogIn, User, LogOut, Sun, Moon } from 'lucide-react';
 
 interface NavbarProps {
-  onOpenHowItWorks: () => void;
-  onOpenAbout: () => void;
-  aiConfigured: boolean;
   lanMode: boolean;
+  currentUser: { name: string; email: string } | null;
+  onOpenLogin: () => void;
+  onLogout: () => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  onOpenHowItWorks,
-  onOpenAbout,
-  aiConfigured,
-  lanMode
+  lanMode,
+  currentUser,
+  onOpenLogin,
+  onLogout,
+  theme,
+  onToggleTheme
 }) => {
   return (
     <header className="app-header">
@@ -30,40 +34,56 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
         </div>
 
-        <nav className="nav-actions" aria-label="Main Navigation">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          {/* Dark / Light Mode Toggle Button */}
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={onOpenHowItWorks}
-            title="Learn how classification and facility matching work"
+            style={{ padding: '0.4rem 0.65rem', borderRadius: 'var(--radius-full)' }}
+            onClick={onToggleTheme}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle Dark Mode"
           >
-            <HelpCircle size={16} />
-            <span>How It Works</span>
+            {theme === 'dark' ? (
+              <Sun size={16} style={{ color: '#f59e0b' }} />
+            ) : (
+              <Moon size={16} style={{ color: '#64748b' }} />
+            )}
+            <span style={{ fontSize: '0.8rem', marginLeft: '2px' }}>
+              {theme === 'dark' ? 'Light' : 'Dark'}
+            </span>
           </button>
 
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={onOpenAbout}
-            title="About the student project and demonstration architecture"
-          >
-            <BookOpen size={16} />
-            <span>Project Info</span>
-          </button>
-
-          <div
-            className="badge-pill"
-            style={{
-              backgroundColor: aiConfigured ? '#d1fae5' : '#fef3c7',
-              color: aiConfigured ? '#065f46' : '#92400e',
-              border: `1px solid ${aiConfigured ? '#a7f3d0' : '#fde68a'}`
-            }}
-            title={aiConfigured ? 'Gemini API is live and active' : 'Offline / Demo Fallback Mode'}
-          >
-            <Sparkles size={12} />
-            <span>{aiConfigured ? 'Gemini Live' : 'Demo Mode'}</span>
-          </div>
-        </nav>
+          {currentUser ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div className="badge-pill" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary-text)', border: '1px solid var(--primary-border)' }}>
+                <User size={13} />
+                <span>{currentUser.name}</span>
+              </div>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+                onClick={onLogout}
+                title="Sign out to Guest mode"
+              >
+                <LogOut size={13} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ fontSize: '0.85rem', padding: '0.4rem 0.85rem' }}
+              onClick={onOpenLogin}
+              title="Sign in to your account (optional)"
+            >
+              <LogIn size={14} />
+              <span>Sign In (Optional)</span>
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );
