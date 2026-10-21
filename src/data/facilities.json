@@ -1,0 +1,389 @@
+[
+  {
+    "id": "demo-fac-01",
+    "name": "Demo E-Waste Facility 01 (Bandra West)",
+    "coordinates": {
+      "latitude": 19.0596,
+      "longitude": 72.8295
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Computers and laptops",
+      "Cables and chargers",
+      "Printers and peripherals"
+    ],
+    "openingHours": "Mon-Sat: 09:00 AM - 06:00 PM",
+    "description": "Fictional suburban collection center specializing in IT hardware and consumer electronics.",
+    "address": "Plot 101, Fictional Hill Road, Bandra West, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-02",
+    "name": "Demo E-Waste Facility 02 (Andheri East Hub)",
+    "coordinates": {
+      "latitude": 19.1136,
+      "longitude": 72.8697
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Computers and laptops",
+      "Batteries",
+      "Circuit boards and components",
+      "Household electronic appliances"
+    ],
+    "openingHours": "Mon-Fri: 08:30 AM - 07:00 PM, Sat: 10:00 AM - 04:00 PM",
+    "description": "Synthetic industrial drop-off point accepting high-capacity batteries and component scrap.",
+    "address": "Unit 44, Fictional MIDC Central Road, Andheri East, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-03",
+    "name": "Demo E-Waste Facility 03 (Dadar South Terminal)",
+    "coordinates": {
+      "latitude": 19.0178,
+      "longitude": 72.8478
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Audio and video electronics",
+      "Lighting and electronic devices",
+      "Cables and chargers",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Tue-Sun: 10:00 AM - 08:00 PM",
+    "description": "Simulated civic recycling booth for consumer gadgets, audiovisual gear, and miscellaneous e-waste.",
+    "address": "Sector 12, Fictional Gokhale Road, Dadar West, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-04",
+    "name": "Demo E-Waste Facility 04 (Powai Tech Park Depo)",
+    "coordinates": {
+      "latitude": 19.1257,
+      "longitude": 72.9154
+    },
+    "acceptedCategories": [
+      "Computers and laptops",
+      "Circuit boards and components",
+      "Printers and peripherals",
+      "Cables and chargers"
+    ],
+    "openingHours": "Mon-Fri: 09:00 AM - 05:30 PM",
+    "description": "Fictional depot adjacent to tech campuses, focusing on office compute servers and circuit boards.",
+    "address": "Building 5B, Fictional Technology Boulevard, Powai, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-05",
+    "name": "Demo E-Waste Facility 05 (Kurla Recycling Point)",
+    "coordinates": {
+      "latitude": 19.0688,
+      "longitude": 72.8797
+    },
+    "acceptedCategories": [
+      "Household electronic appliances",
+      "Audio and video electronics",
+      "Batteries",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Mon-Sat: 09:30 AM - 06:30 PM",
+    "description": "Synthetic multi-stream e-waste collection center accepting heavy appliances and consumer batteries.",
+    "address": "Shop 18, Fictional LBS Marg, Kurla West, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-06",
+    "name": "Demo E-Waste Facility 06 (Thane West Green Center)",
+    "coordinates": {
+      "latitude": 19.1982,
+      "longitude": 72.9636
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Computers and laptops",
+      "Lighting and electronic devices",
+      "Household electronic appliances",
+      "Cables and chargers"
+    ],
+    "openingHours": "Daily: 09:00 AM - 07:00 PM",
+    "description": "Fictional green reclamation center handling residential e-waste, tubes, LEDs, and computing devices.",
+    "address": "Block C, Fictional Pokhran Road No 2, Thane West (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-07",
+    "name": "Demo E-Waste Facility 07 (Navi Mumbai Vashi Hub)",
+    "coordinates": {
+      "latitude": 19.0771,
+      "longitude": 72.9986
+    },
+    "acceptedCategories": [
+      "Batteries",
+      "Circuit boards and components",
+      "Computers and laptops",
+      "Printers and peripherals",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Mon-Sat: 08:00 AM - 08:00 PM",
+    "description": "Synthetic Navi Mumbai regional sorting center with specialized handling for lithium-ion packs and PCBs.",
+    "address": "Sector 19A, Fictional APMC Market Road, Vashi, Navi Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-08",
+    "name": "Demo E-Waste Facility 08 (Colaba Heritage Point)",
+    "coordinates": {
+      "latitude": 18.9154,
+      "longitude": 72.8258
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Audio and video electronics",
+      "Cables and chargers",
+      "Lighting and electronic devices"
+    ],
+    "openingHours": "Mon-Fri: 10:00 AM - 06:00 PM",
+    "description": "Simulated south-point collection kiosk suited for small consumer devices and power cables.",
+    "address": "Near Fictional Gateway Square, Colaba, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-09",
+    "name": "Demo E-Waste Facility 09 (Goregaon IT Junction)",
+    "coordinates": {
+      "latitude": 19.1663,
+      "longitude": 72.8526
+    },
+    "acceptedCategories": [
+      "Computers and laptops",
+      "Printers and peripherals",
+      "Circuit boards and components",
+      "Phones and tablets"
+    ],
+    "openingHours": "Mon-Sat: 09:00 AM - 06:00 PM",
+    "description": "Fictional IT scrap processor accepting desktops, monitors, server racks, and network hardware.",
+    "address": "Wing A, Fictional Mindspace Ring Road, Goregaon West, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-10",
+    "name": "Demo E-Waste Facility 10 (Chembur Green Depot)",
+    "coordinates": {
+      "latitude": 19.0522,
+      "longitude": 72.9005
+    },
+    "acceptedCategories": [
+      "Household electronic appliances",
+      "Batteries",
+      "Lighting and electronic devices",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Wed-Mon: 09:00 AM - 05:00 PM",
+    "description": "Simulated eastern suburban depot accepting micro-wave ovens, blenders, batteries, and lighting ballasts.",
+    "address": "Plot 88, Fictional Sion-Trombay Road, Chembur, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-11",
+    "name": "Demo E-Waste Facility 11 (Malad West Sorting Unit)",
+    "coordinates": {
+      "latitude": 19.1868,
+      "longitude": 72.8486
+    },
+    "acceptedCategories": [
+      "Audio and video electronics",
+      "Household electronic appliances",
+      "Cables and chargers",
+      "Phones and tablets"
+    ],
+    "openingHours": "Mon-Sat: 10:00 AM - 07:00 PM",
+    "description": "Fictional consumer sorting center for smart TVs, audio receivers, gaming consoles, and mobile gadgets.",
+    "address": "Fictional Link Road, Malad West, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-12",
+    "name": "Demo E-Waste Facility 12 (Borivali National Park Eco Gate)",
+    "coordinates": {
+      "latitude": 19.2288,
+      "longitude": 72.8573
+    },
+    "acceptedCategories": [
+      "Batteries",
+      "Phones and tablets",
+      "Lighting and electronic devices",
+      "Computers and laptops",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Tue-Sun: 08:00 AM - 06:00 PM",
+    "description": "Fictional community green gateway with specialized drop bins for spent batteries and compact electronics.",
+    "address": "Gate 3, Fictional SV Road, Borivali East, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-13",
+    "name": "Demo E-Waste Facility 13 (Worli Seaface Station)",
+    "coordinates": {
+      "latitude": 19.0144,
+      "longitude": 72.8181
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Cables and chargers",
+      "Printers and peripherals",
+      "Audio and video electronics"
+    ],
+    "openingHours": "Mon-Fri: 09:30 AM - 06:30 PM",
+    "description": "Synthetic coastal collection hub for obsolete office peripherals, printers, amplifiers, and cords.",
+    "address": "Promenade 5, Fictional Khan Abdul Ghaffar Khan Road, Worli, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-14",
+    "name": "Demo E-Waste Facility 14 (Ghatkopar East Junction)",
+    "coordinates": {
+      "latitude": 19.0864,
+      "longitude": 72.9082
+    },
+    "acceptedCategories": [
+      "Circuit boards and components",
+      "Household electronic appliances",
+      "Computers and laptops",
+      "Batteries"
+    ],
+    "openingHours": "Daily: 09:00 AM - 08:00 PM",
+    "description": "Fictional central transit depot handling industrial appliances, PCB extraction, and battery staging.",
+    "address": "Unit 12, Fictional MG Road, Ghatkopar East, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-15",
+    "name": "Demo E-Waste Facility 15 (Belapur CBD Terminal)",
+    "coordinates": {
+      "latitude": 19.0185,
+      "longitude": 73.0405
+    },
+    "acceptedCategories": [
+      "Computers and laptops",
+      "Printers and peripherals",
+      "Cables and chargers",
+      "Circuit boards and components"
+    ],
+    "openingHours": "Mon-Fri: 09:00 AM - 05:00 PM",
+    "description": "Synthetic government and commercial enterprise e-scrap consolidation yard in CBD Belapur.",
+    "address": "Sector 11, Fictional Palm Beach Corridor, CBD Belapur, Navi Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-16",
+    "name": "Demo E-Waste Facility 16 (Bhayandar Industrial Zone)",
+    "coordinates": {
+      "latitude": 19.3015,
+      "longitude": 72.8532
+    },
+    "acceptedCategories": [
+      "Household electronic appliances",
+      "Circuit boards and components",
+      "Lighting and electronic devices",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Mon-Sat: 08:30 AM - 06:00 PM",
+    "description": "Fictional heavy electronics dismantling yard handling large appliances, fixtures, and bulk components.",
+    "address": "Plot 204, Fictional Golden Nest Road, Bhayandar East (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-17",
+    "name": "Demo E-Waste Facility 17 (Lower Parel Mill Hub)",
+    "coordinates": {
+      "latitude": 18.9953,
+      "longitude": 72.8296
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Computers and laptops",
+      "Audio and video electronics",
+      "Cables and chargers"
+    ],
+    "openingHours": "Mon-Sun: 10:00 AM - 09:00 PM",
+    "description": "Synthetic city-center collection center catering to urban tech workers and creative studios.",
+    "address": "Compound 7, Fictional Senapati Bapat Marg, Lower Parel, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-18",
+    "name": "Demo E-Waste Facility 18 (Kalyan West Reclamation)",
+    "coordinates": {
+      "latitude": 19.2437,
+      "longitude": 73.1355
+    },
+    "acceptedCategories": [
+      "Batteries",
+      "Household electronic appliances",
+      "Printers and peripherals",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Tue-Sun: 09:00 AM - 06:00 PM",
+    "description": "Fictional suburban reclamation point for white goods, power supplies, battery units, and printer cartridges.",
+    "address": "Fictional Station Link Road, Kalyan West (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-19",
+    "name": "Demo E-Waste Facility 19 (BKC Sustainable Point)",
+    "coordinates": {
+      "latitude": 19.0662,
+      "longitude": 72.8681
+    },
+    "acceptedCategories": [
+      "Phones and tablets",
+      "Computers and laptops",
+      "Batteries",
+      "Cables and chargers",
+      "Printers and peripherals",
+      "Circuit boards and components"
+    ],
+    "openingHours": "Mon-Fri: 08:00 AM - 07:00 PM",
+    "description": "Synthetic corporate district flagship demo station accepting modern digital equipment and battery arrays.",
+    "address": "G Block, Fictional Bandra Kurla Complex Road, BKC, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  },
+  {
+    "id": "demo-fac-20",
+    "name": "Demo E-Waste Facility 20 (Dharavi Artisanal Upcycling Hub)",
+    "coordinates": {
+      "latitude": 19.0402,
+      "longitude": 72.8558
+    },
+    "acceptedCategories": [
+      "Audio and video electronics",
+      "Lighting and electronic devices",
+      "Household electronic appliances",
+      "Other or uncertain e-waste"
+    ],
+    "openingHours": "Mon-Sat: 09:00 AM - 07:00 PM",
+    "description": "Fictional circular economy depot focusing on repair assessment, lighting components, and appliance recovery.",
+    "address": "90 Feet Road, Fictional Dharavi Sector 5, Mumbai (Demo Only)",
+    "isDemo": true,
+    "contactNote": "Sample fictional record for classroom demonstration"
+  }
+]

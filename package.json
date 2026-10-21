@@ -1,0 +1,40 @@
+{
+  "name": "ecowaste-navigator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Student-level sustainability web application to classify e-waste and discover nearest sample facilities in Mumbai.",
+  "scripts": {
+    "dev:frontend": "vite",
+    "dev:server": "tsx server/index.ts",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:frontend\"",
+    "build:frontend": "vite build",
+    "build": "vite build",
+    "start": "tsx server/index.ts",
+    "demo:network": "vite build && tsx server/index.ts --lan",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@google/genai": "^2.30.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/leaflet": "^1.9.14",
+    "@types/node": "^22.8.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.4"
+  }
+}
