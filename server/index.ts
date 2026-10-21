@@ -22,7 +22,8 @@ dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000', 10);
 const isLanMode = process.env.LAN_MODE === 'true' || process.argv.includes('--lan');
-const BIND_HOST = isLanMode ? '0.0.0.0' : '127.0.0.1';
+const isCloudDeploy = Boolean(process.env.RENDER || process.env.RAILWAY || process.env.NODE_ENV === 'production' || (process.env.PORT && process.env.PORT !== '5000'));
+const BIND_HOST = (isLanMode || isCloudDeploy) ? '0.0.0.0' : '127.0.0.1';
 
 // Middleware
 app.use(cors());
